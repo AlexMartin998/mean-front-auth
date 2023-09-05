@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 import { AuthService } from '../../services/auth.service';
@@ -14,6 +15,7 @@ export class LoginPageComponent {
   // nueva forma de Inyectar en Angular, ya NO por constructor. Con esto incluso de puede Inyectar Services en Functiones de TS
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   // // reactive form
   public myForm: FormGroup = this.fb.group({
@@ -28,7 +30,7 @@ export class LoginPageComponent {
 
     // // dispara la req el .subscribe()
     this.authService.login(email, password).subscribe({
-      next: () => console.log('todo ok'),
+      next: () => this.router.navigateByUrl('/dashboard'),
       error: (errorMessage: string) => {
         Swal.fire({
           icon: 'error',

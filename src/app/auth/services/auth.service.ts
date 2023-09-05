@@ -17,8 +17,9 @@ export class AuthService {
   private _authStatus = signal<AuthStatus>(AuthStatus.checking);
 
   // dar acceso al mundo exterior con ComputedSignals (signals de SOLO LECTURA) para q NADIE fuera del service pueda cambiar el value de los Signals
-  public currentUser = computed(() => this._currentUser);
-  public authStatus = computed(() => this._authStatus);
+  // los    SIGNALS   se INVOCAN con el parentesis ()
+  public currentUser = computed(() => this._currentUser());
+  public authStatus = computed(() => this._authStatus());
 
   // // methods
   login(email: string, password: string): Observable<boolean> {

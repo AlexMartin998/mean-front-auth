@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { isAuthenticatedGuard } from './auth/guards/is-authenticated.guard';
+
 const routes: Routes = [
   {
     path: 'auth',
@@ -11,7 +13,9 @@ const routes: Routes = [
     path: 'dashboard',
     loadChildren: () =>
       import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
-    // guards
+
+    // guards Secured Routes
+    canActivate: [isAuthenticatedGuard],
   },
 
   // { path: '404', component: Error404PageComponent },
