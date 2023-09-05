@@ -1,9 +1,14 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, catchError, map, tap, throwError } from 'rxjs';
+import { Observable, catchError, map, of, throwError } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-import { AuthStatus, LoginResponse, User } from '../interfaces';
+import {
+  AuthStatus,
+  LoginResponse,
+  RenewTokenResponse,
+  User,
+} from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -28,18 +33,38 @@ export class AuthService {
 
     return this.http.post<LoginResponse>(url, body).pipe(
       // // si todo salio bien
-      tap(({ user, token }) => {
-        this._currentUser.set(user);
-        this._authStatus.set(AuthStatus.authenticated);
-
-        localStorage.setItem('token', token);
-      }),
-      map(() => true),
+      map(({ user, token }) => this.setAuthentication(user, token)),
 
       // // errors
       // catchError no nos da flexibilidad, deberia retornar el boolean, pero con el throwError puedo hacer mas cosas  <-- ver impl en el .subscribe()
       // atrapo y envio el message error del back
       catchError((error) => throwError(() => error.error.message))
     );
+  }
+
+  checkAuthStatus(): Observable<boolean> {
+    const url = `${this.baseUrl}/auth/renew-token`;
+    const token = localStorage.getItem('token');
+    if (!token) return of(false);
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<RenewTokenResponse>(url, { headers }).pipe(
+      map(({ user, token }) => this.setAuthentication(user, token)),
+      catchError(() => {
+        this._authStatus.set(AuthStatus.notAuthenticated);
+
+        return of(false);
+      })
+    );
+  }
+
+  private setAuthentication(user: User, token: string): boolean {
+    this._currentUser.set(user);
+    this._authStatus.set(AuthStatus.authenticated);
+
+    localStorage.setItem('token', token);
+
+    return true;
   }
 }
