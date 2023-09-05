@@ -1,1 +1,5 @@
-<router-outlet></router-outlet>
+<!-- si aun esta checkeando -->
+<h1 *ngIf="!finishedAuthChecking()">Loading...</h1>
+
+<!-- solo si ha terminado de revisar -->
+<router-outlet *ngIf="finishedAuthChecking()"></router-outlet>

@@ -1,4 +1,5 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+
 import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
@@ -16,4 +17,8 @@ export class DashboardLayoutComponent {
   // get user() {
   //   return this.authService.currentUser();
   // }
+
+  logOut() {
+    this.authService.logout();
+  }
 }

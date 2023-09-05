@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "npm run envs && ng serve",
+    "start:dev": "npm run envs && ng serve",
     "build": "npm run envs && ng build",
     "envs": "node ./scripts/set-envs.js",
     "watch": "ng build --watch --configuration development",
